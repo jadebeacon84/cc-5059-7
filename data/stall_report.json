@@ -1,0 +1,50 @@
+{
+  "n_onsets": 16,
+  "mean_abs_position_error_beats": 0.0,
+  "max_abs_position_error_beats": 0.0,
+  "fraction_within_half_beat": 1.0,
+  "mean_abs_accompaniment_lag_seconds": 1.2345,
+  "accompaniment_notes_played": 13,
+  "accompaniment_stalls": 0,
+  "min_confidence_when_playing": 0.541,
+  "ambiguous_position_windows": 4,
+  "audio": {
+    "performer_seconds": 16.438,
+    "accompaniment_seconds": 16.439,
+    "performer_rms": 0.36067,
+    "accompaniment_rms": 0.10745
+  },
+  "position_error_series": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "lag_series_seconds": [
+    0.0,
+    0.599,
+    0.599,
+    0.55,
+    -0.745,
+    -0.745,
+    -2.033,
+    -3.342,
+    -3.342,
+    0.758,
+    1.15,
+    1.15,
+    1.036
+  ]
+}

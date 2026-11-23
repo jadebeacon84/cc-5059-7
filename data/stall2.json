@@ -1,0 +1,308 @@
+{
+ "score": "demo_repeat_phrase",
+ "config": {
+  "seed": 31,
+  "tempo_drift": 0.0,
+  "timing_jitter": 0.03,
+  "wrong_note_rate": 0.0,
+  "missed_note_rate": 0.0,
+  "repeat_press_rate": 0.0,
+  "pause_beats": [
+   2.0
+  ],
+  "pause_seconds": 5.0,
+  "skip_indices": []
+ },
+ "events": [
+  {
+   "time": 0.0146,
+   "kind": "on",
+   "pitch": 60,
+   "gt_index": 0,
+   "gt_beat": 0.0
+  },
+  {
+   "time": 0.5044,
+   "kind": "off",
+   "pitch": 60
+  },
+  {
+   "time": 0.6678,
+   "kind": "on",
+   "pitch": 62,
+   "gt_index": 1,
+   "gt_beat": 1.0
+  },
+  {
+   "time": 1.159,
+   "kind": "off",
+   "pitch": 62
+  },
+  {
+   "time": 1.3248,
+   "kind": "on",
+   "pitch": 64,
+   "gt_index": 2,
+   "gt_beat": 2.0
+  },
+  {
+   "time": 1.8602,
+   "kind": "off",
+   "pitch": 64
+  },
+  {
+   "time": 6.9862,
+   "kind": "on",
+   "pitch": 65,
+   "gt_index": 3,
+   "gt_beat": 3.0
+  },
+  {
+   "time": 7.6095,
+   "kind": "off",
+   "pitch": 65
+  },
+  {
+   "time": 7.6752,
+   "kind": "on",
+   "pitch": 64,
+   "gt_index": 4,
+   "gt_beat": 4.0
+  },
+  {
+   "time": 8.1769,
+   "kind": "off",
+   "pitch": 64
+  },
+  {
+   "time": 8.3588,
+   "kind": "on",
+   "pitch": 62,
+   "gt_index": 5,
+   "gt_beat": 5.0
+  },
+  {
+   "time": 8.9844,
+   "kind": "off",
+   "pitch": 62
+  },
+  {
+   "time": 8.9875,
+   "kind": "on",
+   "pitch": 60,
+   "gt_index": 6,
+   "gt_beat": 6.0
+  },
+  {
+   "time": 9.4593,
+   "kind": "off",
+   "pitch": 60
+  },
+  {
+   "time": 9.6826,
+   "kind": "on",
+   "pitch": 62,
+   "gt_index": 7,
+   "gt_beat": 7.0
+  },
+  {
+   "time": 10.1857,
+   "kind": "off",
+   "pitch": 62
+  },
+  {
+   "time": 10.3308,
+   "kind": "on",
+   "pitch": 60,
+   "gt_index": 8,
+   "gt_beat": 8.0
+  },
+  {
+   "time": 10.8044,
+   "kind": "off",
+   "pitch": 60
+  },
+  {
+   "time": 11.6471,
+   "kind": "on",
+   "pitch": 67,
+   "gt_index": 9,
+   "gt_beat": 10.0
+  },
+  {
+   "time": 12.2216,
+   "kind": "off",
+   "pitch": 67
+  },
+  {
+   "time": 12.4131,
+   "kind": "on",
+   "pitch": 65,
+   "gt_index": 10,
+   "gt_beat": 11.0
+  },
+  {
+   "time": 12.9308,
+   "kind": "off",
+   "pitch": 65
+  },
+  {
+   "time": 12.9802,
+   "kind": "on",
+   "pitch": 64,
+   "gt_index": 11,
+   "gt_beat": 12.0
+  },
+  {
+   "time": 13.5593,
+   "kind": "off",
+   "pitch": 64
+  },
+  {
+   "time": 13.6904,
+   "kind": "on",
+   "pitch": 62,
+   "gt_index": 12,
+   "gt_beat": 13.0
+  },
+  {
+   "time": 14.1731,
+   "kind": "off",
+   "pitch": 62
+  },
+  {
+   "time": 14.3966,
+   "kind": "on",
+   "pitch": 60,
+   "gt_index": 13,
+   "gt_beat": 14.0
+  },
+  {
+   "time": 14.9483,
+   "kind": "on",
+   "pitch": 62,
+   "gt_index": 14,
+   "gt_beat": 15.0
+  },
+  {
+   "time": 15.0286,
+   "kind": "off",
+   "pitch": 60
+  },
+  {
+   "time": 15.5086,
+   "kind": "off",
+   "pitch": 62
+  },
+  {
+   "time": 15.6818,
+   "kind": "on",
+   "pitch": 60,
+   "gt_index": 15,
+   "gt_beat": 16.0
+  },
+  {
+   "time": 16.6549,
+   "kind": "off",
+   "pitch": 60
+  }
+ ],
+ "ground_truth": [
+  {
+   "index": 0,
+   "beat": 0.0,
+   "played": true,
+   "time": 0.0146
+  },
+  {
+   "index": 1,
+   "beat": 1.0,
+   "played": true,
+   "time": 0.6678
+  },
+  {
+   "index": 2,
+   "beat": 2.0,
+   "played": true,
+   "time": 1.3248
+  },
+  {
+   "index": 3,
+   "beat": 3.0,
+   "played": true,
+   "time": 6.9862
+  },
+  {
+   "index": 4,
+   "beat": 4.0,
+   "played": true,
+   "time": 7.6752
+  },
+  {
+   "index": 5,
+   "beat": 5.0,
+   "played": true,
+   "time": 8.3588
+  },
+  {
+   "index": 6,
+   "beat": 6.0,
+   "played": true,
+   "time": 8.9875
+  },
+  {
+   "index": 7,
+   "beat": 7.0,
+   "played": true,
+   "time": 9.6826
+  },
+  {
+   "index": 8,
+   "beat": 8.0,
+   "played": true,
+   "time": 10.3308
+  },
+  {
+   "index": 9,
+   "beat": 10.0,
+   "played": true,
+   "time": 11.6471
+  },
+  {
+   "index": 10,
+   "beat": 11.0,
+   "played": true,
+   "time": 12.4131
+  },
+  {
+   "index": 11,
+   "beat": 12.0,
+   "played": true,
+   "time": 12.9802
+  },
+  {
+   "index": 12,
+   "beat": 13.0,
+   "played": true,
+   "time": 13.6904
+  },
+  {
+   "index": 13,
+   "beat": 14.0,
+   "played": true,
+   "time": 14.3966
+  },
+  {
+   "index": 14,
+   "beat": 15.0,
+   "played": true,
+   "time": 14.9483
+  },
+  {
+   "index": 15,
+   "beat": 16.0,
+   "played": true,
+   "time": 15.6818
+  }
+ ]
+}

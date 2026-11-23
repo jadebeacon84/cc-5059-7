@@ -1,0 +1,6 @@
+numpy>=1.24
+# optional live audio output; replay/WAV rendering works without it
+sounddevice>=0.4
+# optional hardware MIDI input; terminal keyboard works without it
+mido>=1.3
+pytest>=7.0
