@@ -1,0 +1,9 @@
+{
+ "selected": "budget",
+ "rationale": "kept behaviour intact on all scenarios with -33.9% mean event-latency change vs baseline",
+ "candidates": [
+  "budget",
+  "entropy"
+ ],
+ "base": "baseline"
+}

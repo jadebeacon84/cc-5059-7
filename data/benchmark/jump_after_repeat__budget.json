@@ -1,0 +1,427 @@
+{
+ "scenario": "jump_after_repeat",
+ "variant": "budget",
+ "score": "bench_sections",
+ "load": {
+  "seed": 21,
+  "base_bpm": 120.0,
+  "accel": 0.35,
+  "timing_jitter": 0.02,
+  "missed_note_rate": 0.06,
+  "repeat_press_rate": 0.0,
+  "pause_after_beats": [],
+  "pause_seconds": 2.0
+ },
+ "wall_seconds": 0.0156,
+ "n_events": 60,
+ "n_estimates": 1086,
+ "event_latency_ms": {
+  "mean": 0.1619,
+  "p95": 0.2139,
+  "max": 0.2298
+ },
+ "candidate_stats": {
+  "on_events": 29,
+  "off_events": 30,
+  "cand_insertion": 520,
+  "cand_forward": 3363,
+  "cand_repeat": 20,
+  "merged_in": 3903,
+  "merged_out": 765
+ },
+ "phase_seconds": {
+  "expand": 0.003647,
+  "merge": 0.000913
+ },
+ "position": {
+  "mean_abs_error_beats": 0.3667,
+  "max_abs_error_beats": 9.0,
+  "within_half_beat": 0.9,
+  "onsets_after_jump": 8,
+  "mistracked_onsets": 0,
+  "relock_events_after_jump": 3
+ },
+ "accompaniment": {
+  "mean_abs_lag_seconds": 0.6214,
+  "played": 26,
+  "stalls": 2
+ },
+ "behavior": {
+  "expected_index_series": [
+   1,
+   2,
+   3,
+   4,
+   6,
+   7,
+   8,
+   9,
+   1,
+   2,
+   3,
+   4,
+   6,
+   7,
+   8,
+   10,
+   11,
+   12,
+   14,
+   15,
+   16,
+   17,
+   17,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33
+  ],
+  "confidence_series": [
+   0.933823,
+   0.825194,
+   0.709795,
+   0.512855,
+   0.670746,
+   0.624496,
+   0.704301,
+   0.797128,
+   0.643121,
+   0.700421,
+   0.663907,
+   0.498732,
+   0.655051,
+   0.601715,
+   0.689463,
+   0.689225,
+   0.741545,
+   0.771233,
+   0.560842,
+   0.753632,
+   0.69837,
+   0.66006,
+   0.184528,
+   0.604138,
+   0.85354,
+   0.878329,
+   0.774886,
+   0.857681,
+   0.882155,
+   0.899843
+  ],
+  "ambiguous_windows": 7,
+  "n_stalls": 2,
+  "n_played_acc": 26
+ },
+ "evidence": {
+  "per_onset": [
+   {
+    "t": 0.0156,
+    "pitch": 60,
+    "latency_ms": 0.016,
+    "candidates": 0,
+    "best_beat": 0.0,
+    "gt_beat": 0.0,
+    "confidence": 0.933823,
+    "expected_index": 1
+   },
+   {
+    "t": 0.5209,
+    "pitch": 62,
+    "latency_ms": 0.0987,
+    "candidates": 70,
+    "best_beat": 1.0,
+    "gt_beat": 1.0,
+    "confidence": 0.825194,
+    "expected_index": 2
+   },
+   {
+    "t": 0.9924,
+    "pitch": 64,
+    "latency_ms": 0.1599,
+    "candidates": 146,
+    "best_beat": 2.0,
+    "gt_beat": 2.0,
+    "confidence": 0.709795,
+    "expected_index": 3
+   },
+   {
+    "t": 1.9288,
+    "pitch": 64,
+    "latency_ms": 0.1729,
+    "candidates": 145,
+    "best_beat": 3.0,
+    "gt_beat": 4.0,
+    "confidence": 0.512855,
+    "expected_index": 4
+   },
+   {
+    "t": 2.4403,
+    "pitch": 62,
+    "latency_ms": 0.1737,
+    "candidates": 145,
+    "best_beat": 5.0,
+    "gt_beat": 5.0,
+    "confidence": 0.670746,
+    "expected_index": 6
+   },
+   {
+    "t": 2.9573,
+    "pitch": 60,
+    "latency_ms": 0.1774,
+    "candidates": 147,
+    "best_beat": 6.0,
+    "gt_beat": 6.0,
+    "confidence": 0.624496,
+    "expected_index": 7
+   },
+   {
+    "t": 3.373,
+    "pitch": 62,
+    "latency_ms": 0.1807,
+    "candidates": 148,
+    "best_beat": 7.0,
+    "gt_beat": 7.0,
+    "confidence": 0.704301,
+    "expected_index": 8
+   },
+   {
+    "t": 3.8034,
+    "pitch": 60,
+    "latency_ms": 0.1771,
+    "candidates": 149,
+    "best_beat": 8.0,
+    "gt_beat": 8.0,
+    "confidence": 0.797128,
+    "expected_index": 9
+   },
+   {
+    "t": 4.2904,
+    "pitch": 60,
+    "latency_ms": 0.179,
+    "candidates": 150,
+    "best_beat": 0.0,
+    "gt_beat": 0.0,
+    "confidence": 0.643121,
+    "expected_index": 1
+   },
+   {
+    "t": 4.7247,
+    "pitch": 62,
+    "latency_ms": 0.1758,
+    "candidates": 142,
+    "best_beat": 1.0,
+    "gt_beat": 1.0,
+    "confidence": 0.700421,
+    "expected_index": 2
+   },
+   {
+    "t": 5.1573,
+    "pitch": 64,
+    "latency_ms": 0.1783,
+    "candidates": 149,
+    "best_beat": 2.0,
+    "gt_beat": 2.0,
+    "confidence": 0.663907,
+    "expected_index": 3
+   },
+   {
+    "t": 6.0477,
+    "pitch": 64,
+    "latency_ms": 0.1801,
+    "candidates": 152,
+    "best_beat": 3.0,
+    "gt_beat": 4.0,
+    "confidence": 0.498732,
+    "expected_index": 4
+   },
+   {
+    "t": 6.4827,
+    "pitch": 62,
+    "latency_ms": 0.1859,
+    "candidates": 151,
+    "best_beat": 5.0,
+    "gt_beat": 5.0,
+    "confidence": 0.655051,
+    "expected_index": 6
+   },
+   {
+    "t": 6.8962,
+    "pitch": 60,
+    "latency_ms": 0.2298,
+    "candidates": 150,
+    "best_beat": 6.0,
+    "gt_beat": 6.0,
+    "confidence": 0.601715,
+    "expected_index": 7
+   },
+   {
+    "t": 7.3069,
+    "pitch": 62,
+    "latency_ms": 0.1872,
+    "candidates": 152,
+    "best_beat": 7.0,
+    "gt_beat": 7.0,
+    "confidence": 0.689463,
+    "expected_index": 8
+   },
+   {
+    "t": 8.5842,
+    "pitch": 67,
+    "latency_ms": 0.1652,
+    "candidates": 149,
+    "best_beat": 10.0,
+    "gt_beat": 10.0,
+    "confidence": 0.689225,
+    "expected_index": 10
+   },
+   {
+    "t": 9.0548,
+    "pitch": 65,
+    "latency_ms": 0.2139,
+    "candidates": 155,
+    "best_beat": 11.0,
+    "gt_beat": 11.0,
+    "confidence": 0.741545,
+    "expected_index": 11
+   },
+   {
+    "t": 9.4123,
+    "pitch": 64,
+    "latency_ms": 0.1779,
+    "candidates": 156,
+    "best_beat": 12.0,
+    "gt_beat": 12.0,
+    "confidence": 0.771233,
+    "expected_index": 12
+   },
+   {
+    "t": 10.2479,
+    "pitch": 60,
+    "latency_ms": 0.1875,
+    "candidates": 151,
+    "best_beat": 14.0,
+    "gt_beat": 14.0,
+    "confidence": 0.560842,
+    "expected_index": 14
+   },
+   {
+    "t": 10.675,
+    "pitch": 62,
+    "latency_ms": 0.1902,
+    "candidates": 151,
+    "best_beat": 15.0,
+    "gt_beat": 15.0,
+    "confidence": 0.753632,
+    "expected_index": 15
+   },
+   {
+    "t": 11.05,
+    "pitch": 64,
+    "latency_ms": 0.1867,
+    "candidates": 148,
+    "best_beat": 16.0,
+    "gt_beat": 16.0,
+    "confidence": 0.69837,
+    "expected_index": 16
+   },
+   {
+    "t": 11.4274,
+    "pitch": 65,
+    "latency_ms": 0.1778,
+    "candidates": 146,
+    "best_beat": 17.0,
+    "gt_beat": 17.0,
+    "confidence": 0.66006,
+    "expected_index": 17
+   },
+   {
+    "t": 14.9647,
+    "pitch": 72,
+    "latency_ms": 0.1876,
+    "candidates": 144,
+    "best_beat": 17.0,
+    "gt_beat": 26.0,
+    "confidence": 0.184528,
+    "expected_index": 17
+   },
+   {
+    "t": 15.3867,
+    "pitch": 71,
+    "latency_ms": 0.1819,
+    "candidates": 147,
+    "best_beat": 27.0,
+    "gt_beat": 27.0,
+    "confidence": 0.604138,
+    "expected_index": 27
+   },
+   {
+    "t": 15.748,
+    "pitch": 69,
+    "latency_ms": 0.1929,
+    "candidates": 147,
+    "best_beat": 28.0,
+    "gt_beat": 28.0,
+    "confidence": 0.85354,
+    "expected_index": 28
+   },
+   {
+    "t": 16.1524,
+    "pitch": 67,
+    "latency_ms": 0.1475,
+    "candidates": 126,
+    "best_beat": 29.0,
+    "gt_beat": 29.0,
+    "confidence": 0.878329,
+    "expected_index": 29
+   },
+   {
+    "t": 16.4866,
+    "pitch": 65,
+    "latency_ms": 0.1392,
+    "candidates": 107,
+    "best_beat": 30.0,
+    "gt_beat": 30.0,
+    "confidence": 0.774886,
+    "expected_index": 30
+   },
+   {
+    "t": 16.9148,
+    "pitch": 64,
+    "latency_ms": 0.1172,
+    "candidates": 90,
+    "best_beat": 31.0,
+    "gt_beat": 31.0,
+    "confidence": 0.857681,
+    "expected_index": 31
+   },
+   {
+    "t": 17.2631,
+    "pitch": 62,
+    "latency_ms": 0.0686,
+    "candidates": 53,
+    "best_beat": 32.0,
+    "gt_beat": 32.0,
+    "confidence": 0.882155,
+    "expected_index": 32
+   },
+   {
+    "t": 17.6194,
+    "pitch": 60,
+    "latency_ms": 0.0507,
+    "candidates": 37,
+    "best_beat": 33.0,
+    "gt_beat": 33.0,
+    "confidence": 0.899843,
+    "expected_index": 33
+   }
+  ],
+  "audio": {
+   "performer_seconds": 18.516,
+   "accompaniment_seconds": 19.031,
+   "accompaniment_rms": 0.16321
+  }
+ }
+}

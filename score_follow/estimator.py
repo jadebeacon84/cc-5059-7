@@ -13,13 +13,14 @@ Ambiguous readings stay alive together, so a repeated phrase whose tail was
 skipped leaves two score positions in the beam until later evidence settles
 it. Output confidence reflects that ambiguity and the scheduler reacts to it.
 
-Candidate updates can be budgeted (see ``_handle_on`` for the exact order): a
+Candidate updates are budgeted (see ``_handle_on`` for the exact order): a
 local continuation tier scores forward matches strongest-reading-first up to
 ``local_budget`` per event, and a reserved far-jump tier lets the strongest
 readings propose repeat-region openings, so a legitimate jump explanation is
-never starved by local pressure. With the budgets at ``None`` the update
-order is the pre-speedup baseline; the benchmark harness in
-``score_follow.benchmark`` compares the variants before any is selected.
+never starved by local pressure. The budget split was selected against an
+entropy-adaptive window variant on the committed benchmark runs
+(data/benchmark/); the pre-speedup update order stays reproducible with
+``local_budget=None, far_jump_budget=None, far_jump_proposers=None``.
 """
 from __future__ import annotations
 
@@ -67,9 +68,9 @@ class Estimator:
         max_tempo_ratio: float = 2.5,
         lookahead_notes: int = 10,
         repeat_jump_cost: float = 0.85,
-        local_budget: int | None = None,
-        far_jump_budget: int | None = None,
-        far_jump_proposers: int | None = None,
+        local_budget: int | None = 128,
+        far_jump_budget: int | None = 24,
+        far_jump_proposers: int | None = 8,
         adaptive_window: bool = False,
         lookahead_min: int = 5,
         lookahead_max: int = 16,
