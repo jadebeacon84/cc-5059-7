@@ -28,15 +28,15 @@ class TimeSource(Protocol):
 
 
 class SystemClock:
-    __slots__ = ("_t0",)
+    __slots__ = ("_t0", "_monotonic")
 
     def __init__(self) -> None:
         import time
-        self._time = time
+        self._monotonic = time.monotonic
         self._t0 = time.monotonic()
 
     def now(self) -> float:
-        return self._time.monotonic() - self._t0
+        return self._monotonic() - self._t0
 
 
 @dataclass

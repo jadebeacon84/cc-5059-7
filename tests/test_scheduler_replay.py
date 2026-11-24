@@ -23,6 +23,14 @@ class VirtualClockTests(unittest.TestCase):
             clk.advance(2.0)
 
 
+class SystemClockTests(unittest.TestCase):
+    def test_wall_clock_advances(self):
+        from score_follow.scheduler import SystemClock
+        clk = SystemClock()
+        self.assertGreaterEqual(clk.now(), 0.0)
+        self.assertLess(clk.now(), 5.0)
+
+
 class SchedulerTests(unittest.TestCase):
     def setUp(self):
         self.score = demo_score()
