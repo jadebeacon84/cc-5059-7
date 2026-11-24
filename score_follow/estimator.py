@@ -12,11 +12,20 @@ key event advances every hypothesis through several interpretations:
 Ambiguous readings stay alive together, so a repeated phrase whose tail was
 skipped leaves two score positions in the beam until later evidence settles
 it. Output confidence reflects that ambiguity and the scheduler reacts to it.
+
+Candidate updates can be budgeted (see ``_handle_on`` for the exact order): a
+local continuation tier scores forward matches strongest-reading-first up to
+``local_budget`` per event, and a reserved far-jump tier lets the strongest
+readings propose repeat-region openings, so a legitimate jump explanation is
+never starved by local pressure. With the budgets at ``None`` the update
+order is the pre-speedup baseline; the benchmark harness in
+``score_follow.benchmark`` compares the variants before any is selected.
 """
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from time import perf_counter
 
 from .score import Score
 from .types import Estimate, NoteEvent
@@ -58,6 +67,14 @@ class Estimator:
         max_tempo_ratio: float = 2.5,
         lookahead_notes: int = 10,
         repeat_jump_cost: float = 0.85,
+        local_budget: int | None = None,
+        far_jump_budget: int | None = None,
+        far_jump_proposers: int | None = None,
+        adaptive_window: bool = False,
+        lookahead_min: int = 5,
+        lookahead_max: int = 16,
+        entropy_threshold: float = 0.65,
+        profile: bool = False,
     ) -> None:
         self.score = score
         self.beam_width = beam_width
@@ -72,10 +89,39 @@ class Estimator:
         self.max_tempo_ratio = max_tempo_ratio
         self.lookahead_notes = lookahead_notes
         self.repeat_jump_cost = repeat_jump_cost
+        self.local_budget = local_budget
+        self.far_jump_budget = far_jump_budget
+        self.far_jump_proposers = far_jump_proposers
+        self.adaptive_window = adaptive_window
+        self.lookahead_min = lookahead_min
+        self.lookahead_max = lookahead_max
+        self.entropy_threshold = entropy_threshold
+        self.profile = profile
         self.initial_tempo = score.initial_tempo_bpm / 60.0
+        # repeat-region opening notes, sealed once: the per-event scan of the
+        # whole solo staff would otherwise repeat for every hypothesis
+        self._repeat_openings: dict[float, tuple[int, ...]] = {
+            first: tuple(
+                j for j, n in enumerate(score.solo)
+                if n.start >= first - 1e-9 and n.start <= first + 3.0
+            )
+            for first in score.repeat_targets()
+        }
         self.hypotheses: list[Hypothesis] = []
         self.event_count = 0
         self.last_estimate: Estimate | None = None
+        # cost-breakdown counters for the candidate-update path; always-on
+        # integer increments, phase timing only when ``profile`` is set
+        self.stats: dict[str, int] = {
+            "on_events": 0,
+            "off_events": 0,
+            "cand_insertion": 0,
+            "cand_forward": 0,
+            "cand_repeat": 0,
+            "merged_in": 0,
+            "merged_out": 0,
+        }
+        self.phase_seconds: dict[str, float] = {"expand": 0.0, "merge": 0.0}
 
     # ------------------------------------------------------------------ #
     # Public API
@@ -120,8 +166,29 @@ class Estimator:
             self.hypotheses = self._seed(event)
             return
 
+        self.stats["on_events"] += 1
+        t0 = perf_counter() if self.profile else 0.0
+        # Computation order of one candidate update:
+        # 1. Seal per-event shared tables. Every hypothesis window overlaps
+        #    its neighbours', so the same target note would otherwise be
+        #    pitch-scored once per hypothesis; the memo scores each distinct
+        #    target pitch exactly once per event.
+        # 2. Local continuation tier. Hypotheses are stored weight-sorted
+        #    (every normalize/prune site keeps that invariant), so spending
+        #    the local budget in storage order spends it on the strongest
+        #    readings first; the budget caps total forward scoring per event.
+        # 3. Far-jump tier. A reserved budget lets the strongest hypotheses
+        #    propose repeat-region openings, so local pressure can never
+        #    starve a legitimate jump interpretation.
+        # 4. Merge duplicate beliefs, truncate to the beam, normalize.
+        pitch_memo: dict[int, float] = {}
+        lookahead = self._event_lookahead()
+        upper = min(
+            len(self.score.solo),
+            max(h.index for h in self.hypotheses) + lookahead,
+        )
         candidates: list[Hypothesis] = []
-        upper = min(len(self.score.solo), self._max_index())
+        local_spent = 0
         for h in self.hypotheses:
             # Interpretation 1: insertion (repeated press / ornament / noise).
             # Re-pressing a held key is common and must not kill the reading.
@@ -133,27 +200,76 @@ class Estimator:
                     h.log_weight - ins_cost, frozenset(held),
                 )
             )
+            self.stats["cand_insertion"] += 1
             # Interpretation 2: match a score note at or ahead of index.
-            for j in range(h.index, min(upper, h.index + self.lookahead_notes)):
-                candidates.append(self._match(h, j, event))
-            # Interpretation 3: a notated repeat sends the reading backwards
-            # to the region start. This competes with the forward reading, so
-            # the two score positions coexist until later evidence decides.
+            for j in range(h.index, min(upper, h.index + lookahead)):
+                if self.local_budget is not None and local_spent >= self.local_budget:
+                    break
+                candidates.append(self._match(h, j, event, pitch_memo))
+                local_spent += 1
+                self.stats["cand_forward"] += 1
+        # Interpretation 3: a notated repeat sends the reading backwards
+        # to the region start. This competes with the forward reading, so
+        # the two score positions coexist until later evidence decides.
+        proposers = (
+            self.hypotheses
+            if self.far_jump_proposers is None
+            else self.hypotheses[: self.far_jump_proposers]
+        )
+        far_spent = 0
+        for h in proposers:
             for first_beat in self.score.repeat_targets():
-                candidates.extend(self._repeat_matches(h, first_beat, event))
+                new = self._repeat_matches(h, first_beat, event, pitch_memo)
+                if self.far_jump_budget is not None:
+                    new = new[: max(0, self.far_jump_budget - far_spent)]
+                far_spent += len(new)
+                self.stats["cand_repeat"] += len(new)
+                candidates.extend(new)
 
+        t1 = perf_counter() if self.profile else 0.0
+        self.stats["merged_in"] += len(candidates)
         merged = self._merge(candidates)
+        self.stats["merged_out"] += len(merged)
         merged.sort(key=lambda x: x.log_weight, reverse=True)
         self.hypotheses = self._normalize(merged[: self.beam_width])
+        if self.profile:
+            t2 = perf_counter()
+            self.phase_seconds["expand"] += t1 - t0
+            self.phase_seconds["merge"] += t2 - t1
 
-    def _match(self, h: Hypothesis, j: int, event: NoteEvent) -> Hypothesis:
+    def _event_lookahead(self) -> int:
+        """Forward window for this event.
+
+        Fixed ``lookahead_notes`` unless the adaptive variant is enabled;
+        then a confident (low-entropy) beam gets the narrow window and the
+        window only widens when the candidate entropy says the reading is
+        genuinely undecided.
+        """
+        if not self.adaptive_window:
+            return self.lookahead_notes
+        weights = [h.weight for h in self.hypotheses]
+        total = math.fsum(weights)
+        if total <= 0.0 or len(weights) < 2:
+            return self.lookahead_min
+        entropy = -math.fsum(
+            (w / total) * math.log(w / total) for w in weights if w > 0.0
+        ) / math.log(len(weights))
+        return self.lookahead_max if entropy >= self.entropy_threshold else self.lookahead_min
+
+    def _match(
+        self, h: Hypothesis, j: int, event: NoteEvent, pitch_memo: dict[int, float]
+    ) -> Hypothesis:
         target = self.score.solo[j]
         skipped = j - h.index
         cost = 0.0
 
-        # pitch: exact note or chromatic error
-        dist = abs(target.pitch - event.pitch)
-        cost += _pitch_cost(dist, self.pitch_scale)
+        # pitch: exact note or chromatic error; one computation per distinct
+        # target pitch per event, shared across all hypotheses
+        pc = pitch_memo.get(target.pitch)
+        if pc is None:
+            pc = _pitch_cost(abs(target.pitch - event.pitch), self.pitch_scale)
+            pitch_memo[target.pitch] = pc
+        cost += pc
 
         # skipped score notes between the old position and this one
         # (negative values are repeat jumps, handled by their own cost)
@@ -196,7 +312,8 @@ class Estimator:
         )
 
     def _repeat_matches(
-        self, h: Hypothesis, first_beat: float, event: NoteEvent
+        self, h: Hypothesis, first_beat: float, event: NoteEvent,
+        pitch_memo: dict[int, float],
     ) -> list[Hypothesis]:
         """Match this event near the start of a notated repeat region.
 
@@ -231,12 +348,8 @@ class Estimator:
         if early_by < 0.5 * typical_ioi:
             return []
         out: list[Hypothesis] = []
-        for j, note in enumerate(self.score.solo):
-            if note.start < first_beat - 1e-9:
-                continue
-            if note.start > first_beat + 3.0:  # only the region's opening notes
-                break
-            base = self._match(h, j, event)
+        for j in self._repeat_openings[first_beat]:
+            base = self._match(h, j, event, pitch_memo)
             base.log_weight -= self.repeat_jump_cost
             out.append(base)
         return out
@@ -269,6 +382,7 @@ class Estimator:
         return self._normalize(out[: self.beam_width])
 
     def _handle_off(self, event: NoteEvent) -> None:
+        self.stats["off_events"] += 1
         for h in self.hypotheses:
             if event.pitch in h.held:
                 h.held = frozenset(p for p in h.held if p != event.pitch)
@@ -277,11 +391,6 @@ class Estimator:
     # ------------------------------------------------------------------ #
     # Bookkeeping
     # ------------------------------------------------------------------ #
-    def _max_index(self) -> int:
-        if not self.hypotheses:
-            return self.lookahead_notes
-        return max(h.index for h in self.hypotheses) + self.lookahead_notes
-
     @staticmethod
     def _merge(hyps: list[Hypothesis]) -> list[Hypothesis]:
         # same (index, held set) beliefs collapse by log-sum-exp weight

@@ -75,6 +75,8 @@ class RunResult:
     scheduler: Scheduler
     performer_bus: AudioBus
     accompaniment_bus: AudioBus
+    # (event time, wall-clock seconds spent inside estimator.handle_event)
+    event_latencies: list = None
 
 
 def run_replay(
@@ -82,13 +84,16 @@ def run_replay(
     source: ReplaySource,
     *,
     tick_step: float = 0.02,
+    estimator: Estimator | None = None,
+    on_event=None,
 ) -> RunResult:
     clock = VirtualClock()
-    estimator = Estimator(score)
+    estimator = estimator if estimator is not None else Estimator(score)
     scheduler = Scheduler(score, clock)
     performer = AudioBus()
     accompaniment = AudioBus()
     estimates: list = []
+    latencies: list = []
 
     it = iter(source.events())
     pending = next(it, None)
@@ -97,11 +102,16 @@ def run_replay(
     while True:
         if pending is not None and pending.time <= clock.now() + 1e-12:
             ev = pending
+            t0 = time.perf_counter()
             estimate = estimator.handle_event(ev)
+            latency = time.perf_counter() - t0
+            latencies.append((ev.time, latency))
             _record_performer(performer, ev)
             for action, entry in scheduler.update(estimate):
                 _emit(action, entry, clock, accompaniment)
             estimates.append(estimate)
+            if on_event is not None:
+                on_event(ev, estimate, latency)
             pending = next(it, None)
             continue
         # no event due: advance the virtual clock and poll timeouts
@@ -122,7 +132,7 @@ def run_replay(
             held.discard(m.pitch)
     for pitch in held:
         performer.note_off(clock.now(), pitch)
-    return RunResult(clock, estimates, scheduler, performer, accompaniment)
+    return RunResult(clock, estimates, scheduler, performer, accompaniment, latencies)
 
 
 def _record_performer(bus: AudioBus, ev: NoteEvent) -> None:
